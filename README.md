@@ -1,4 +1,4 @@
-# linn01
+# linn
 
 A new Flutter project.
 
