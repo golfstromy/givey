@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:linn01/components/ln_amount_field.dart';
 import 'package:linn01/constants.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 import '../components/ln_text_field.dart';
 
-class NewDonation extends StatelessWidget {
+class NewDonation extends StatefulWidget {
   const NewDonation({Key? key}) : super(key: key);
 
+  @override
+  _NewDonationState createState() => _NewDonationState();
+}
+
+class _NewDonationState extends State<NewDonation> {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -79,32 +85,94 @@ class NewDonation extends StatelessWidget {
                 ),
               ),
             ),
-            LnTextField(),
-            CupertinoTextField(
-              placeholder: 'Spende an',
-              clearButtonMode: OverlayVisibilityMode.editing,
-              cursorColor: Theme.of(context).accentColor,
-              enableSuggestions: false,
-              maxLength: 37,
-              maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              textInputAction: TextInputAction.next,
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              child: LnTextField(text: 'Spende an'),
+            ),
+            SizedBox(
+              height: 16,
             ),
             Container(
-              height: 150,
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: DateTime(1969, 1, 1),
-                onDateTimeChanged: (DateTime newDateTime) {
-                  // Do something
-                },
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(
+                        textStyle: MaterialStateProperty.all(
+                          TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: fontColor),
+                        ),
+                        padding: MaterialStateProperty.all(
+                          EdgeInsets.all(18),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        backgroundColor:
+                            MaterialStateProperty.all(textFieldColor),
+                        foregroundColor: MaterialStateProperty.all(fontColor),
+                      ),
+                      onPressed: () => {},
+                      child: Text('Sept 21'),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: LnAmountField(
+                        text: '0,00 €',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          CurrencyTextInputFormatter(
+                            locale: 'de_de',
+                            decimalDigits: 2,
+                            symbol: '\€',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            CupertinoTextField(
-              placeholder: '0,00 €',
-              keyboardType: TextInputType.numberWithOptions(
-                decimal: false,
-              ),
-            ),
+            )
+            // Container(
+            //   margin: EdgeInsets.symmetric(horizontal: 16),
+            //   child: CupertinoTextField(
+            //     textAlign: TextAlign.center,
+            //     placeholderStyle: TextStyle(),
+            //     placeholder: 'Spende an',
+            //     clearButtonMode: OverlayVisibilityMode.editing,
+            //     cursorColor: Theme.of(context).accentColor,
+            //     enableSuggestions: false,
+            //     // maxLength: 37,
+            //     // maxLengthEnforcement: MaxLengthEnforcement.enforced,
+            //     textInputAction: TextInputAction.next,
+            //   ),
+            // ),
+            // Container(
+            //   height: 150,
+            //   child: CupertinoDatePicker(
+            //     mode: CupertinoDatePickerMode.date,
+            //     initialDateTime: DateTime(1969, 1, 1),
+            //     onDateTimeChanged: (DateTime newDateTime) {
+            //       // Do something
+            //     },
+            //   ),
+            // ),
+            // CupertinoTextField(
+            //   placeholder: '0,00 €',
+            //   keyboardType: TextInputType.numberWithOptions(
+            //     decimal: false,
+            //   ),
+            // ),
           ],
         ),
       ),

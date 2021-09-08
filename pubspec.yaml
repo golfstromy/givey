@@ -41,6 +41,7 @@ dependencies:
   firebase_core: ^1.6.0
   cloud_firestore: ^2.5.1
   modal_bottom_sheet: ^2.0.0
+  currency_text_input_formatter: ^2.1.2
 
 dev_dependencies:
   flutter_test:
