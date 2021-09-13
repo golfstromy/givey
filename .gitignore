@@ -49,3 +49,6 @@ app.*.map.json
 google-services.json
 
 .flutter-plugins-dependencies
+.vscode/launch.json
+ios/Runner/Info.plist
+ios/Runner/Info.plist
