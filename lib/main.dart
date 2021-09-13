@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,11 +14,11 @@ import 'modals/newdonation.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  initializeDateFormatting('de', null).then((_) => runApp(MyApp()));
+  initializeDateFormatting('de', null).then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -33,26 +32,11 @@ class _MyAppState extends State<MyApp> {
   final Stream<QuerySnapshot> _donationsStream =
       FirebaseFirestore.instance.collection('donations').snapshots();
 
-  Future<void> addDonation() {
-    return donations
-        .add({
-          'title': 'New Title',
-          'amount': 42,
-          'date': DateFormat('MMM yy', 'de').format(DateTime.now()),
-        })
-        .then((value) => print("Donation Added"))
-        .catchError((error) => print("Failed to add Donation: $error"));
-  }
-
   @override
   Widget build(BuildContext context) {
     const title = 'Spendenapp';
     return MaterialApp(
       title: title,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        accentColor: Color.fromRGBO(0, 122, 255, 1.0),
-      ),
       home: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -71,33 +55,32 @@ class _MyAppState extends State<MyApp> {
                   expand: true,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
-                    return NewDonation();
+                    return const NewDonation();
                   },
                 ),
               ),
             ),
           ],
           elevation: 0,
-          brightness: Brightness.light,
-          backgroundColor: const Color.fromRGBO(245, 245, 245, 1.0),
+          backgroundColor: Colors.white,
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: _donationsStream,
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              return Text('Something went wrong');
+              return const Text('Something went wrong');
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("Loading");
+              return const Text("Loading");
             }
 
             return ListView(
               children: snapshot.data!.docs.map((DocumentSnapshot document) {
                 Map<String, dynamic> data =
                     document.data() as Map<String, dynamic>;
-                return new ListTile(
+                return ListTile(
                     leading: const CircleAvatar(
                       backgroundColor: circleColor,
                       child: Text('DF'),
@@ -107,7 +90,7 @@ class _MyAppState extends State<MyApp> {
                       style: const TextStyle(fontSize: 20),
                     ),
                     subtitle: Text('${data['date']} • monatlich'),
-                    trailing: Text('${data['amount'].toString()} €',
+                    trailing: Text(data['amount'].toString(),
                         style: const TextStyle(
                           fontSize: 17,
                         )));

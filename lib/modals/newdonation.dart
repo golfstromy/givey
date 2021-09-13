@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:linn01/components/ln_amount_field.dart';
 import 'package:linn01/constants.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:intl/intl.dart';
 
 import '../components/ln_text_field.dart';
+import '../constants.dart';
+// import '../components/datetime_picker.dart';
 
 class NewDonation extends StatefulWidget {
   const NewDonation({Key? key}) : super(key: key);
@@ -14,6 +18,24 @@ class NewDonation extends StatefulWidget {
 }
 
 class _NewDonationState extends State<NewDonation> {
+  CollectionReference donations =
+      FirebaseFirestore.instance.collection('donations');
+  final TextEditingController _titleController =
+      TextEditingController(text: '');
+  final TextEditingController _amountController =
+      TextEditingController(text: '');
+
+  Future<void> addDonation() {
+    return donations
+        .add({
+          'title': _titleController.text,
+          'amount': _amountController.text,
+          'date': DateFormat('MMM yy', 'de').format(DateTime.now()),
+        })
+        .then((value) => debugPrint("Donation Added"))
+        .catchError((error) => debugPrint("Failed to add Donation: $error"));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -22,18 +44,16 @@ class _NewDonationState extends State<NewDonation> {
         child: Column(
           children: [
             Stack(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 4),
+                  margin: const EdgeInsets.only(left: 4),
                   alignment: Alignment.centerLeft,
                   child: CupertinoButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(
+                    child: const Text(
                       'Abbrechen',
                       style: TextStyle(
-                        color: Theme.of(context).accentColor,
+                        color: accentColor,
                         fontSize: 20,
                       ),
                     ),
@@ -41,8 +61,8 @@ class _NewDonationState extends State<NewDonation> {
                 ),
                 Container(
                   alignment: Alignment.center,
-                  padding: EdgeInsets.all(16),
-                  child: Text(
+                  padding: const EdgeInsets.all(16),
+                  child: const Text(
                     'Neue Spende',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -53,14 +73,17 @@ class _NewDonationState extends State<NewDonation> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(right: 4),
+                  margin: const EdgeInsets.only(right: 4),
                   alignment: Alignment.centerRight,
                   child: CupertinoButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
+                    onPressed: () {
+                      addDonation();
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
                       'Fertig',
                       style: TextStyle(
-                          color: Theme.of(context).accentColor,
+                          color: accentColor,
                           fontWeight: FontWeight.w600,
                           fontSize: 20),
                     ),
@@ -70,7 +93,7 @@ class _NewDonationState extends State<NewDonation> {
             ),
             Center(
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 30),
+                margin: const EdgeInsets.symmetric(vertical: 30),
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
@@ -86,14 +109,17 @@ class _NewDonationState extends State<NewDonation> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: LnTextField(text: 'Spende an'),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: LnTextField(
+                hintText: 'Spende an',
+                controller: _titleController,
+              ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -101,13 +127,13 @@ class _NewDonationState extends State<NewDonation> {
                     child: TextButton(
                       style: ButtonStyle(
                         textStyle: MaterialStateProperty.all(
-                          TextStyle(
+                          const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
                               color: fontColor),
                         ),
                         padding: MaterialStateProperty.all(
-                          EdgeInsets.all(18),
+                          const EdgeInsets.all(18),
                         ),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
@@ -119,60 +145,30 @@ class _NewDonationState extends State<NewDonation> {
                         foregroundColor: MaterialStateProperty.all(fontColor),
                       ),
                       onPressed: () => {},
-                      child: Text('Sept 21'),
+                      child: Text(
+                          'seit ${DateFormat('MMM yy', 'de').format(DateTime.now())}'),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 16,
                   ),
                   Expanded(
-                    child: Container(
-                      child: LnAmountField(
-                        text: '0,00 €',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          CurrencyTextInputFormatter(
-                            locale: 'de_de',
-                            decimalDigits: 2,
-                            symbol: '\€',
-                          ),
-                        ],
-                      ),
+                    child: LnAmountField(
+                      hintText: '0,00 €',
+                      controller: _amountController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        CurrencyTextInputFormatter(
+                          locale: 'de_de',
+                          decimalDigits: 2,
+                          symbol: '€',
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            )
-            // Container(
-            //   margin: EdgeInsets.symmetric(horizontal: 16),
-            //   child: CupertinoTextField(
-            //     textAlign: TextAlign.center,
-            //     placeholderStyle: TextStyle(),
-            //     placeholder: 'Spende an',
-            //     clearButtonMode: OverlayVisibilityMode.editing,
-            //     cursorColor: Theme.of(context).accentColor,
-            //     enableSuggestions: false,
-            //     // maxLength: 37,
-            //     // maxLengthEnforcement: MaxLengthEnforcement.enforced,
-            //     textInputAction: TextInputAction.next,
-            //   ),
-            // ),
-            // Container(
-            //   height: 150,
-            //   child: CupertinoDatePicker(
-            //     mode: CupertinoDatePickerMode.date,
-            //     initialDateTime: DateTime(1969, 1, 1),
-            //     onDateTimeChanged: (DateTime newDateTime) {
-            //       // Do something
-            //     },
-            //   ),
-            // ),
-            // CupertinoTextField(
-            //   placeholder: '0,00 €',
-            //   keyboardType: TextInputType.numberWithOptions(
-            //     decimal: false,
-            //   ),
-            // ),
+            ),
           ],
         ),
       ),
