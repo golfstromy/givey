@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:linn01/models/donation.dart';
 import 'package:linn01/components/ln_amount_field.dart';
 import 'package:linn01/constants.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
@@ -11,7 +12,12 @@ import '../constants.dart';
 // import '../components/datetime_picker.dart';
 
 class NewDonation extends StatefulWidget {
-  const NewDonation({Key? key}) : super(key: key);
+  // final Donation donation;
+  const NewDonation(
+      {
+      // this.donation,
+      Key? key})
+      : super(key: key);
 
   @override
   _NewDonationState createState() => _NewDonationState();
@@ -31,8 +37,9 @@ class _NewDonationState extends State<NewDonation> {
           'title': _titleController.text,
           'amount': _amountController.text,
           'date': DateFormat('MMM yy', 'de').format(DateTime.now()),
+          'timestamp': DateTime.now(),
         })
-        .then((value) => debugPrint("Donation Added"))
+        .then((value) => debugPrint(value.id))
         .catchError((error) => debugPrint("Failed to add Donation: $error"));
   }
 
