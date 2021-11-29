@@ -12,25 +12,15 @@ var currentUser = FirebaseAuth.instance.currentUser;
 
 var userId = currentUser!.uid;
 
-// CollectionReference donations = FirebaseFirestore.instance
-//     .collection('users')
-//     .doc(currentUser!.uid)
-//     .collection('donations');
 final Stream<QuerySnapshot> _donationsStream = FirebaseFirestore.instance
     .collection('users')
     .doc(currentUser!.uid)
     .collection('donations')
+    // .where('date', isEqualTo: 'Nov. 21')
+    // .orderBy('timestamp', descending: true)
     // .where('active', isEqualTo: true)
     .orderBy('timestamp', descending: true)
     .snapshots();
-
-// Stream<QuerySnapshot<Map<String, dynamic>>> getDonationsStream()
-
-// final donationsStreamProvider =
-//     StreamProvider.autoDispose<List<Donation>>((ref) {
-//   final database = ref.watch(databaseProvider)!;
-//   return database.donationsStream();
-// });
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

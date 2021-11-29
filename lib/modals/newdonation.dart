@@ -18,14 +18,13 @@ var userId = currentUser!.uid;
 
 class NewDonation extends StatefulWidget {
   // final Donation donation;
-  NewDonation({this.title = '', this.amount = '', this.donationId, Key? key})
+  const NewDonation(
+      {this.title = '', this.amount = '', this.donationId, Key? key})
       : super(key: key);
 
-  String title;
-  String amount;
-  String? donationId;
-
-  printAll() {}
+  final String title;
+  final String amount;
+  final String? donationId;
 
   @override
   _NewDonationState createState() => _NewDonationState();
@@ -51,7 +50,7 @@ class _NewDonationState extends State<NewDonation> {
           'amount': _amountController.text,
           'date': DateFormat('MMM yy', 'de').format(DateTime.now()),
           'timestamp': DateTime.now(),
-          'active': 'true',
+          'active': true,
         })
         .then((value) => debugPrint(value.id))
         .catchError((error) => debugPrint('Failed to add Donation: $error'));
@@ -65,18 +64,16 @@ class _NewDonationState extends State<NewDonation> {
           'amount': _amountController.text,
           'date': DateFormat('MMM yy', 'de').format(DateTime.now()),
         })
-        .then((value) => print('Donation Updated'))
-        .catchError((error) => print('Failed to update donation: $error'));
+        .then((value) => debugPrint('Donation Updated'))
+        .catchError((error) => debugPrint('Failed to update donation: $error'));
   }
 
-  Future<void> stopDonation() async {
+  Future<void> deleteDonation() async {
     return donations
         .doc(widget.donationId)
-        .update({
-          'active': 'false',
-        })
-        .then((value) => print('Donation stopped!'))
-        .catchError((error) => print('Failed to stop donation: $error'));
+        .delete()
+        .then((value) => debugPrint('Donation deleted!'))
+        .catchError((error) => debugPrint('Failed to stop donation: $error'));
   }
 
   @override
@@ -92,7 +89,12 @@ class _NewDonationState extends State<NewDonation> {
                   margin: const EdgeInsets.only(left: 4),
                   alignment: Alignment.centerLeft,
                   child: CupertinoButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      if (widget.donationId != null) {
+                        deleteDonation();
+                      }
+                      Navigator.pop(context);
+                    },
                     child: (widget.donationId != null)
                         ? const Text(
                             'Delete',

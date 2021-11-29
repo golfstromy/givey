@@ -55,15 +55,15 @@ class _LnTextFieldState extends State<LnTextField> {
         hintText: _focus.hasFocus ? '' : widget.hintText,
         hintStyle: const TextStyle(
             fontSize: 20, fontWeight: FontWeight.w600, color: fontColor),
-        contentPadding: widget.controller.text.isEmpty
-            ? const EdgeInsets.all(18)
-            : EdgeInsets.fromLTRB(
-                widget.controller.text.length < 20
-                    ? 58 - widget.controller.text.length.toDouble() * 2
-                    : 18,
-                18,
-                18,
-                18),
+        // contentPadding: widget.controller.text.isEmpty
+        //     ? const EdgeInsets.all(18)
+        //     : EdgeInsets.fromLTRB(
+        //         widget.controller.text.length < 20
+        //             ? 58 - widget.controller.text.length.toDouble() * 2
+        //             : 18,
+        //         18,
+        //         18,
+        //         18),
         filled: true,
         fillColor: _focus.hasFocus ? Colors.white : textFieldColor,
         suffixIcon: (widget.controller.text.isNotEmpty && _focus.hasFocus)
