@@ -112,15 +112,26 @@ class _NewDonationState extends State<NewDonation> {
                 Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(16),
-                  child: const Text(
-                    'New Donation',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: '.SF UI Display',
-                    ),
-                  ),
+                  // TODO boilerplate
+                  child: (widget.donationId != null)
+                      ? const Text(
+                          'Edit Donation',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: '.SF UI Display',
+                          ),
+                        )
+                      : const Text(
+                          'New Donation',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: '.SF UI Display',
+                          ),
+                        ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(right: 4),

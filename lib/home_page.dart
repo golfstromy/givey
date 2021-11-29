@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:linn01/constants.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-import 'modals/newdonation.dart';
+import 'modals/donation.dart';
 
 var currentUser = FirebaseAuth.instance.currentUser;
 
