@@ -3,19 +3,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:linn01/constants.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'home_page.dart';
-import 'modals/newdonation.dart';
-import './models/donation.dart';
+
+FirebaseAuth auth = FirebaseAuth.instance;
 
 // main() with Firebase and Language
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  UserCredential userCredential =
+      await FirebaseAuth.instance.signInAnonymously();
   initializeDateFormatting('de', null).then((_) => runApp(const MyApp()));
 }
 
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: HomePage(),
     );
   }
