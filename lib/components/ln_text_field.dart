@@ -11,7 +11,7 @@ class LnTextField extends StatefulWidget {
   const LnTextField(
       {this.hintText = '',
       required this.controller, // required needed - workaround?
-      this.keyboardType = TextInputType.name,
+      this.keyboardType = TextInputType.text,
       Key? key})
       : super(key: key);
 

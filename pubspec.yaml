@@ -27,23 +27,24 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  firestore_service:
-    git:
-      url: https://github.com/bizz84/codewithandrea_flutter_packages
-      path: packages/firestore_service
   cloud_firestore: ^2.5.1
   cupertino_icons: ^1.0.2
   currency_text_input_formatter: ^2.1.2
   equatable: ^2.0.3
+  firebase_auth: ^3.2.0
   firebase_core: ^1.6.0
+  firestore_service:
+    git:
+      url: https://github.com/bizz84/codewithandrea_flutter_packages
+      path: packages/firestore_service
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ^0.14.0+3
+  http: ^0.13.4
   intl: ^0.17.0
   modal_bottom_sheet: ^2.0.0
-  firebase_auth: ^3.2.0
 
 dev_dependencies:
   flutter_lints: ^1.0.0

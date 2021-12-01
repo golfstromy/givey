@@ -1,12 +1,50 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:linn01/constants.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
+import 'package:http/http.dart' as http;
 import 'modals/donation.dart';
+
+Future<Organization> fetchOrganization() async {
+  final response = await http.get(Uri.parse(
+      'https://autocomplete.clearbit.com/v1/companies/suggest?query=:vystem.io'));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Organization.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load Organization');
+  }
+}
+
+class Organization {
+  final int name;
+  final int domain;
+  final String logo;
+
+  Organization({
+    required this.name,
+    required this.domain,
+    required this.logo,
+  });
+
+  factory Organization.fromJson(Map<String, dynamic> json) {
+    return Organization(
+      name: json['name'],
+      domain: json['domain'],
+      logo: json['logo'],
+    );
+  }
+}
 
 var currentUser = FirebaseAuth.instance.currentUser;
 
@@ -30,7 +68,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Future<Organization> futureOrganization;
+
   @override
+  void initState() {
+    super.initState();
+    futureOrganization = fetchOrganization();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +103,19 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         backgroundColor: Colors.white,
       ),
-      body: StreamBuilder<QuerySnapshot>(
+      body:
+          // FutureBuilder<Organization>(
+          //   future: futureOrganization,
+          //   builder: (context, snapshot) {
+          //     if (snapshot.hasData) {
+          //       return Image.network(snapshot.data!.logo);
+          //     } else if (snapshot.hasError) {
+          //       return Text('${snapshot.error}');
+          //     }
+          //     return const CircularProgressIndicator();
+          //   },
+          // ),
+          StreamBuilder<QuerySnapshot>(
         stream: _donationsStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
@@ -86,15 +143,16 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                       },
-                  leading: const CircleAvatar(
-                    backgroundColor: circleColor,
-                    child: Text('DF'),
-                  ),
+                  leading: CircleAvatar(
+                      backgroundColor: circleColor,
+                      child: Image.network(
+                          'https://logo.clearbit.com/${donation['title']}')),
                   title: Text(
                     '${donation['title']}',
                     style: const TextStyle(fontSize: 20),
                   ),
-                  subtitle: Text('${donation['date']} • monatlich'),
+                  subtitle: Text(
+                      '${DateFormat('MMM', 'en').format(donation['date'].toDate())} \'${DateFormat('yy', 'en').format(donation['date'].toDate())} • monthly'),
                   trailing: Text(donation['amount'].toString(),
                       style: const TextStyle(
                         fontSize: 17,

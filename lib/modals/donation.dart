@@ -42,13 +42,76 @@ class _NewDonationState extends State<NewDonation> {
   late final TextEditingController _titleController =
       TextEditingController(text: widget.title);
 
+  DateTime selectedDate = DateTime.now();
+
+// todo test keyboard vs datepicker
+  _selectDate(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    assert(theme.platform != null);
+    switch (theme.platform) {
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+        return buildMaterialDatePicker(context);
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+        return buildCupertinoDatePicker(context);
+    }
+  }
+
+  buildMaterialDatePicker(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now(),
+        initialDatePickerMode: DatePickerMode.year);
+    // TODO localization!
+    // helpText: 'Select booking date',
+    // cancelText: 'Not now',
+    // confirmText: 'Book',
+    // errorFormatText: 'Enter valid date',
+    // errorInvalidText: 'Enter date in valid range',
+    // fieldLabelText: 'Booking date',
+    // fieldHintText: 'mm/dd/yyyy');
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  buildCupertinoDatePicker(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext builder) {
+          return Container(
+              height: MediaQuery.of(context).copyWith().size.height / 3,
+              color: Colors.white,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                onDateTimeChanged: (picked) {
+                  if (picked != null && picked != selectedDate) {
+                    setState(() {
+                      selectedDate = picked;
+                    });
+                  }
+                },
+                initialDateTime: selectedDate,
+                minimumYear: 1900,
+                maximumYear: 2025,
+              ));
+        });
+  }
+
   Future<void> addDonation() async {
-    // var uuid = await getDeviceUniqueId();
     return donations
         .add({
           'title': _titleController.text,
           'amount': _amountController.text,
-          'date': DateFormat('MMM yy', 'de').format(DateTime.now()),
+          'date': selectedDate,
+          // DateFormat('MMM yy', 'de').format(DateTime.now()),
           'timestamp': DateTime.now(),
           'active': true,
         })
@@ -62,7 +125,7 @@ class _NewDonationState extends State<NewDonation> {
         .update({
           'title': _titleController.text,
           'amount': _amountController.text,
-          'date': DateFormat('MMM yy', 'de').format(DateTime.now()),
+          'date': selectedDate,
         })
         .then((value) => debugPrint('Donation Updated'))
         .catchError((error) => debugPrint('Failed to update donation: $error'));
@@ -209,9 +272,10 @@ class _NewDonationState extends State<NewDonation> {
                             MaterialStateProperty.all(textFieldColor),
                         foregroundColor: MaterialStateProperty.all(fontColor),
                       ),
-                      onPressed: () => {},
+                      onPressed: () => _selectDate(context),
                       child: Text(
-                          'seit ${DateFormat('MMM yy', 'de').format(DateTime.now())}'),
+                          // Todo localization
+                          '${DateFormat('MMM', 'en').format(selectedDate)} \'${DateFormat('yy', 'en').format(selectedDate)}'),
                     ),
                   ),
                   const SizedBox(
