@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:convert' as convert;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,41 +10,6 @@ import 'package:linn01/constants.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:http/http.dart' as http;
 import 'modals/donation.dart';
-
-Future<Organization> fetchOrganization() async {
-  final response = await http.get(Uri.parse(
-      'https://autocomplete.clearbit.com/v1/companies/suggest?query=:vystem.io'));
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return Organization.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load Organization');
-  }
-}
-
-class Organization {
-  final int name;
-  final int domain;
-  final String logo;
-
-  Organization({
-    required this.name,
-    required this.domain,
-    required this.logo,
-  });
-
-  factory Organization.fromJson(Map<String, dynamic> json) {
-    return Organization(
-      name: json['name'],
-      domain: json['domain'],
-      logo: json['logo'],
-    );
-  }
-}
 
 var currentUser = FirebaseAuth.instance.currentUser;
 
@@ -68,13 +33,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<Organization> futureOrganization;
+  // late Future<OrganizationsList> futureOrganization;
+
+  Future<String> fetchLogo(donationTitle) async {
+    var url =
+        'https://autocomplete.clearbit.com/v1/companies/suggest?query=:$donationTitle';
+
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      var jsonResponse = convert.jsonDecode(response.body);
+      var logoUrl = jsonResponse[0]['logo'];
+      return (logoUrl);
+    } else {
+      return ('Request failed with status: ${response.statusCode}.');
+    }
+  }
 
   @override
-  void initState() {
-    super.initState();
-    futureOrganization = fetchOrganization();
-  }
+  // void initState() {
+  //   super.initState();
+  //   storedFuture = fetchLogo(donation['title']);
+  // }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,19 +83,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         backgroundColor: Colors.white,
       ),
-      body:
-          // FutureBuilder<Organization>(
-          //   future: futureOrganization,
-          //   builder: (context, snapshot) {
-          //     if (snapshot.hasData) {
-          //       return Image.network(snapshot.data!.logo);
-          //     } else if (snapshot.hasError) {
-          //       return Text('${snapshot.error}');
-          //     }
-          //     return const CircularProgressIndicator();
-          //   },
-          // ),
-          StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<QuerySnapshot>(
         stream: _donationsStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
@@ -129,34 +97,43 @@ class _HomePageState extends State<HomePage> {
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> donation =
                   document.data() as Map<String, dynamic>;
-              return ListTile(
-                  onTap: () => {
-                        showCupertinoModalBottomSheet(
-                          context: context,
-                          expand: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) {
-                            return NewDonation(
-                                title: donation['title'],
-                                amount: donation['amount'],
-                                donationId: document.id);
-                          },
-                        ),
-                      },
-                  leading: CircleAvatar(
-                      backgroundColor: circleColor,
-                      child: Image.network(
-                          'https://logo.clearbit.com/${donation['title']}')),
-                  title: Text(
-                    '${donation['title']}',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  subtitle: Text(
-                      '${DateFormat('MMM', 'en').format(donation['date'].toDate())} \'${DateFormat('yy', 'en').format(donation['date'].toDate())} • monthly'),
-                  trailing: Text(donation['amount'].toString(),
-                      style: const TextStyle(
-                        fontSize: 17,
-                      )));
+              return FutureBuilder(
+                  future: fetchLogo(donation['title']),
+                  builder: (context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState) {}
+
+                    if (snapshot.hasData) {
+                      return ListTile(
+                          onTap: () => fetchLogo(donation['title']),
+                          //  () => {
+                          //       showCupertinoModalBottomSheet(
+                          //         context: context,
+                          //         expand: true,
+                          //         backgroundColor: Colors.transparent,
+                          //         builder: (context) {
+                          //           return NewDonation(
+                          //               title: donation['title'],
+                          //               amount: donation['amount'],
+                          //               donationId: document.id);
+                          //         },
+                          //       ),
+                          //     },
+                          leading: Image.network(snapshot.data!),
+                          // () => fetchLogo(donation['title']
+                          title: Text(
+                            '${donation['title']}',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          subtitle: Text(
+                              '${DateFormat('MMM', 'en').format(donation['date'].toDate())} \'${DateFormat('yy', 'en').format(donation['date'].toDate())} • monthly'),
+                          trailing: Text(donation['amount'].toString(),
+                              style: const TextStyle(
+                                fontSize: 17,
+                              )));
+                    } else {
+                      return Container();
+                    }
+                  });
             }).toList(),
           );
         },
