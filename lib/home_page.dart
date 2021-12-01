@@ -104,20 +104,19 @@ class _HomePageState extends State<HomePage> {
 
                     if (snapshot.hasData) {
                       return ListTile(
-                          onTap: () => fetchLogo(donation['title']),
-                          //  () => {
-                          //       showCupertinoModalBottomSheet(
-                          //         context: context,
-                          //         expand: true,
-                          //         backgroundColor: Colors.transparent,
-                          //         builder: (context) {
-                          //           return NewDonation(
-                          //               title: donation['title'],
-                          //               amount: donation['amount'],
-                          //               donationId: document.id);
-                          //         },
-                          //       ),
-                          //     },
+                          onTap: () => {
+                                showCupertinoModalBottomSheet(
+                                  context: context,
+                                  expand: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) {
+                                    return NewDonation(
+                                        title: donation['title'],
+                                        amount: donation['amount'],
+                                        donationId: document.id);
+                                  },
+                                ),
+                              },
                           leading: Image.network(snapshot.data!),
                           // () => fetchLogo(donation['title']
                           title: Text(
