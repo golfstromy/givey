@@ -239,7 +239,7 @@ class _NewDonationState extends State<NewDonation> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               child: LnTextField(
-                hintText: 'Spende an',
+                hintText: 'Donate to',
                 controller: _titleController,
               ),
             ),
