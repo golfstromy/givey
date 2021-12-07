@@ -1,12 +1,10 @@
 import 'dart:convert' as convert;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:linn01/constants.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:http/http.dart' as http;
 import 'modals/donation.dart';
@@ -74,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                 expand: true,
                 backgroundColor: Colors.transparent,
                 builder: (context) {
-                  return NewDonation();
+                  return const NewDonation();
                 },
               ),
             ),
@@ -100,7 +98,7 @@ class _HomePageState extends State<HomePage> {
               return FutureBuilder(
                   future: fetchLogo(donation['title']),
                   builder: (context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.connectionState == ConnectionState) {}
+                    // if (snapshot.connectionState == ConnectionState) {}
 
                     if (snapshot.hasData) {
                       return ListTile(
@@ -117,7 +115,8 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                               },
-                          leading: Image.network(snapshot.data!),
+                          leading: CircleAvatar(
+                              child: Image.network(snapshot.data!)),
                           // () => fetchLogo(donation['title']
                           title: Text(
                             '${donation['title']}',

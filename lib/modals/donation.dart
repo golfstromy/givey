@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 import '../components/ln_text_field.dart';
 import '../constants.dart';
+import '../services/fetch_logo.dart';
 
 // import '../components/datetime_picker.dart';
 var currentUser = FirebaseAuth.instance.currentUser;
@@ -47,7 +48,6 @@ class _NewDonationState extends State<NewDonation> {
 // todo test keyboard vs datepicker
   _selectDate(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    assert(theme.platform != null);
     switch (theme.platform) {
       case TargetPlatform.android:
       case TargetPlatform.fuchsia:
@@ -92,7 +92,7 @@ class _NewDonationState extends State<NewDonation> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 onDateTimeChanged: (picked) {
-                  if (picked != null && picked != selectedDate) {
+                  if (picked != selectedDate) {
                     setState(() {
                       selectedDate = picked;
                     });
@@ -137,6 +137,14 @@ class _NewDonationState extends State<NewDonation> {
         .delete()
         .then((value) => debugPrint('Donation deleted!'))
         .catchError((error) => debugPrint('Failed to stop donation: $error'));
+  }
+
+  @override
+  void initState() {
+    _titleController.addListener(() {
+      setState(() {});
+    });
+    super.initState();
   }
 
   @override
@@ -219,23 +227,40 @@ class _NewDonationState extends State<NewDonation> {
                 ),
               ],
             ),
-            Center(
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 30),
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: circleColor,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: circleColor.withOpacity(0.5),
-                      blurRadius: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            FutureBuilder(
+                future: fetchLogo(_titleController.text),
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data != null) {
+                      return Center(
+                          child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 30),
+                        width: 100,
+                        height: 100,
+                        child: Image.network(snapshot.data!),
+                      ));
+                    } else {
+                      return Container();
+                    }
+                  } else {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 30),
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: circleColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: circleColor.withOpacity(0.5),
+                            blurRadius: 20,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                }),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               child: LnTextField(
