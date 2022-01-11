@@ -34,6 +34,7 @@ class NewDonation extends StatefulWidget {
 class _NewDonationState extends State<NewDonation> {
   CollectionReference donations = FirebaseFirestore.instance
       .collection('users')
+      // .doc('mockup2')
       .doc(userId)
       .collection('donations');
 
@@ -235,30 +236,62 @@ class _NewDonationState extends State<NewDonation> {
                     if (snapshot.data != null) {
                       return Center(
                           child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 30),
-                        width: 100,
-                        height: 100,
-                        child: Image.network(snapshot.data!),
-                      ));
+                              margin: const EdgeInsets.symmetric(vertical: 30),
+                              width: 100,
+                              height: 100,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(4.0),
+                                child: Image.network(snapshot.data!),
+                              )));
                     } else {
                       return Container();
                     }
                   } else {
                     return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 30),
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: circleColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: circleColor.withOpacity(0.5),
-                            blurRadius: 20,
-                          ),
-                        ],
-                      ),
-                    );
+                        margin: const EdgeInsets.symmetric(vertical: 30),
+                        width: 100,
+                        height: 100,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4.0),
+                          child: (_titleController.text.length > 2)
+                              ? Container(
+                                  color: accentColor,
+                                  width: 56,
+                                  height: double.infinity,
+                                  child: Center(
+                                      child: Text(_titleController.text[0],
+                                          // textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 60,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ))))
+                              : Container(
+                                  decoration: BoxDecoration(boxShadow: [
+                                    BoxShadow(
+                                      color: circleColor.withOpacity(0.5),
+                                      blurRadius: 20,
+                                    )
+                                  ]),
+                                  width: 56,
+                                  height: double.infinity,
+                                ),
+                        ));
+                    // Container(
+                    //   margin: const EdgeInsets.symmetric(vertical: 30),
+                    //   width: 100,
+                    //   height: 100,
+                    //   decoration: BoxDecoration(
+                    //     color: circleColor,
+                    //     shape: BoxShape.circle,
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //         color: circleColor.withOpacity(0.5),
+                    //         blurRadius: 20,
+                    // //       ),
+                    //     ],
+                    //   ),
+                    // );
                   }
                 }),
             Container(
@@ -300,7 +333,8 @@ class _NewDonationState extends State<NewDonation> {
                       onPressed: () => _selectDate(context),
                       child: Text(
                           // Todo localization
-                          '${DateFormat('MMM', 'en').format(selectedDate)} \'${DateFormat('yy', 'en').format(selectedDate)}'),
+                          // '${DateFormat('MMM', 'en').format(selectedDate)} \'${DateFormat('yy', 'en').format(selectedDate)}'),
+                          '${DateFormat('MMM', 'de').format(selectedDate)} \'${DateFormat('yy', 'de').format(selectedDate)}'),
                     ),
                   ),
                   const SizedBox(
