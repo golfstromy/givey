@@ -1,7 +1,8 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "build/web",
     "site": "app-givey",
+
     "ignore": [
       "firebase.json",
       "**/.*",

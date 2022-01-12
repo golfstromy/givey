@@ -15,6 +15,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   UserCredential userCredential =
       await FirebaseAuth.instance.signInAnonymously();
+  await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
   initializeDateFormatting('de', null).then((_) => runApp(const MyApp()));
 }
 
