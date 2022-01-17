@@ -1,4 +1,8 @@
-# linn
+# Givey
+
+Manage your monthly donations in one place.
+
+Live-Demo: app-givey.firebaseapp.com
 
 A new Flutter project.
 
