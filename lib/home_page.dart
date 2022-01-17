@@ -50,10 +50,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  // void initState() {
-  //   super.initState();
-  //   storedFuture = fetchLogo(donation['title']);
-  // }
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!
+        .addPostFrameCallback((_) => showCupertinoModalBottomSheet(
+              context: context,
+              expand: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) {
+                return const NewDonation();
+              },
+            ));
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
