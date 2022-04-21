@@ -9,6 +9,7 @@ import 'package:linn01/constants.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:http/http.dart' as http;
 import 'modals/donation.dart';
+import 'components/gv_list_tile.dart';
 
 var currentUser = FirebaseAuth.instance.currentUser;
 
@@ -110,59 +111,7 @@ class _HomePageState extends State<HomePage> {
                     // if (snapshot.connectionState == ConnectionState) {}
 
                     if (snapshot.hasData) {
-                      return ListTile(
-                          onTap: () => {
-                                showCupertinoModalBottomSheet(
-                                  context: context,
-                                  expand: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (context) {
-                                    return NewDonation(
-                                        title: donation['title'],
-                                        amount: donation['amount'],
-                                        donationId: document.id);
-                                  },
-                                ),
-                              },
-                          leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(4.0),
-                              child: Image.network((snapshot.data!),
-                                  frameBuilder: (context, child, frame, _) {
-                                if (frame == null) {
-                                  return Container(
-                                      decoration: BoxDecoration(boxShadow: [
-                                        BoxShadow(
-                                          color: circleColor.withOpacity(0.5),
-                                          blurRadius: 20,
-                                        )
-                                      ]),
-                                      width: 56,
-                                      height: double.infinity,
-                                      child: Center(
-                                          child: Text('${donation['title'][0]}',
-                                              // textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontSize: 60,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                              ))));
-                                } else {
-                                  return child;
-                                }
-                              }, width: 56, height: 56)),
-                          title: Text(
-                            '${donation['title']}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          subtitle: Text(
-                              // '${DateFormat('MMM', 'en').format(donation['date'].toDate())} \'${DateFormat('yy', 'en').format(donation['date'].toDate())} • monthly'),
-                              '${DateFormat('MMM', 'de').format(donation['date'].toDate())} \'${DateFormat('yy', 'de').format(donation['date'].toDate())} • monatlich'),
-                          trailing: Text(donation['amount'].toString(),
-                              style: const TextStyle(
-                                fontSize: 17,
-                              )));
+                      ;
                     } else {
                       // Todo boilerplate listtile in separate file
                       //   return CircularProgressIndicator();

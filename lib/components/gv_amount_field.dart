@@ -1,31 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../constants.dart';
 
-class LnTextField extends StatefulWidget {
+class GvAmountField extends StatefulWidget {
   final String hintText;
   final TextInputType keyboardType;
   final TextEditingController controller;
+  final List<TextInputFormatter>? inputFormatters;
 
-  const LnTextField(
+  const GvAmountField(
       {this.hintText = '',
-      required this.controller, // required needed - workaround?
-      this.keyboardType = TextInputType.text,
+      required this.controller,
+      this.keyboardType = TextInputType.name,
+      this.inputFormatters,
       Key? key})
       : super(key: key);
 
   @override
-  _LnTextFieldState createState() => _LnTextFieldState();
+  _GvAmountFieldState createState() => _GvAmountFieldState();
 }
 
-class _LnTextFieldState extends State<LnTextField> {
+class _GvAmountFieldState extends State<GvAmountField> {
   final FocusNode _focus = FocusNode();
-
-  void _clearTextField() {
-    widget.controller.clear();
-    setState(() {});
-  }
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -41,6 +40,7 @@ class _LnTextFieldState extends State<LnTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      inputFormatters: widget.inputFormatters,
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
@@ -48,32 +48,20 @@ class _LnTextFieldState extends State<LnTextField> {
       textAlign: TextAlign.center,
       autofocus: false,
       enableInteractiveSelection: true,
-      cursorColor: cursorColor,
-      cursorWidth: 2.0,
+      cursorColor: Colors.transparent,
+      cursorWidth: 0,
       cursorRadius: const Radius.circular(2.0),
       decoration: InputDecoration(
-        hintText: _focus.hasFocus ? '' : widget.hintText,
+        hintText: _focus.hasFocus
+            ? _controller.text.isNotEmpty
+                ? ''
+                : widget.hintText
+            : widget.hintText,
         hintStyle: const TextStyle(
             fontSize: 20, fontWeight: FontWeight.w600, color: fontColor),
-        // contentPadding: widget.controller.text.isEmpty
-        //     ? const EdgeInsets.all(18)
-        //     : EdgeInsets.fromLTRB(
-        //         widget.controller.text.length < 20
-        //             ? 58 - widget.controller.text.length.toDouble() * 2
-        //             : 18,
-        //         18,
-        //         18,
-        //         18),
+        contentPadding: const EdgeInsets.all(18),
         filled: true,
         fillColor: _focus.hasFocus ? Colors.white : textFieldColor,
-        suffixIcon: (widget.controller.text.isNotEmpty && _focus.hasFocus)
-            ? IconButton(
-                padding: const EdgeInsets.all(0),
-                icon: const Icon(CupertinoIcons.xmark_circle_fill),
-                color: textFieldColor,
-                onPressed: _clearTextField,
-              )
-            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

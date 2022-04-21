@@ -1,30 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../constants.dart';
 
-class LnAmountField extends StatefulWidget {
+class GvTextField extends StatefulWidget {
   final String hintText;
   final TextInputType keyboardType;
   final TextEditingController controller;
-  final List<TextInputFormatter>? inputFormatters;
 
-  const LnAmountField(
+  const GvTextField(
       {this.hintText = '',
-      required this.controller,
-      this.keyboardType = TextInputType.name,
-      this.inputFormatters,
+      required this.controller, // required needed - workaround?
+      this.keyboardType = TextInputType.text,
       Key? key})
       : super(key: key);
 
   @override
-  _LnAmountFieldState createState() => _LnAmountFieldState();
+  _GvTextFieldState createState() => _GvTextFieldState();
 }
 
-class _LnAmountFieldState extends State<LnAmountField> {
+class _GvTextFieldState extends State<GvTextField> {
   final FocusNode _focus = FocusNode();
-  final TextEditingController _controller = TextEditingController();
+
+  void _clearTextField() {
+    widget.controller.clear();
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -40,7 +41,6 @@ class _LnAmountFieldState extends State<LnAmountField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      inputFormatters: widget.inputFormatters,
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
@@ -48,20 +48,32 @@ class _LnAmountFieldState extends State<LnAmountField> {
       textAlign: TextAlign.center,
       autofocus: false,
       enableInteractiveSelection: true,
-      cursorColor: Colors.transparent,
-      cursorWidth: 0,
+      cursorColor: cursorColor,
+      cursorWidth: 2.0,
       cursorRadius: const Radius.circular(2.0),
       decoration: InputDecoration(
-        hintText: _focus.hasFocus
-            ? _controller.text.isNotEmpty
-                ? ''
-                : widget.hintText
-            : widget.hintText,
+        hintText: _focus.hasFocus ? '' : widget.hintText,
         hintStyle: const TextStyle(
             fontSize: 20, fontWeight: FontWeight.w600, color: fontColor),
-        contentPadding: const EdgeInsets.all(18),
+        // contentPadding: widget.controller.text.isEmpty
+        //     ? const EdgeInsets.all(18)
+        //     : EdgeInsets.fromLTRB(
+        //         widget.controller.text.length < 20
+        //             ? 58 - widget.controller.text.length.toDouble() * 2
+        //             : 18,
+        //         18,
+        //         18,
+        //         18),
         filled: true,
         fillColor: _focus.hasFocus ? Colors.white : textFieldColor,
+        suffixIcon: (widget.controller.text.isNotEmpty && _focus.hasFocus)
+            ? IconButton(
+                padding: const EdgeInsets.all(0),
+                icon: const Icon(CupertinoIcons.xmark_circle_fill),
+                color: textFieldColor,
+                onPressed: _clearTextField,
+              )
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

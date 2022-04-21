@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:linn01/components/ln_amount_field.dart';
+import 'package:linn01/components/gv_amount_field.dart';
 import 'package:linn01/constants.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 
-import '../components/ln_text_field.dart';
+import '../components/gv_text_field.dart';
 import '../constants.dart';
 import '../services/fetch_logo.dart';
 
@@ -54,9 +54,9 @@ class _NewDonationState extends State<NewDonation> {
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
+      case TargetPlatform.macOS:
         return buildMaterialDatePicker(context);
       case TargetPlatform.iOS:
-      case TargetPlatform.macOS:
         return buildCupertinoDatePicker(context);
     }
   }
@@ -296,7 +296,7 @@ class _NewDonationState extends State<NewDonation> {
                 }),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: LnTextField(
+              child: GvTextField(
                 hintText: 'Donate to',
                 controller: _titleController,
               ),
@@ -341,15 +341,15 @@ class _NewDonationState extends State<NewDonation> {
                     width: 16,
                   ),
                   Expanded(
-                    child: LnAmountField(
-                      hintText: '0,00 €',
+                    child: GvAmountField(
+                      hintText: '0,00 £',
                       controller: _amountController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         CurrencyTextInputFormatter(
                           locale: 'de_de',
                           decimalDigits: 2,
-                          symbol: '€',
+                          symbol: '£',
                         ),
                       ],
                     ),
